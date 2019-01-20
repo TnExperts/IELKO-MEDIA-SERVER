@@ -1,8 +1,10 @@
 #!/bin/bash
-sudo add-apt-repository ppa:mc3man/trusty-media -y
+sudo apt-get install curl screen nano -y
+#sudo add-apt-repository ppa:mc3man/trusty-media -y
+sudo add-apt-repository ppa:mc3man/xerus-media -y  # Ubuntu Server 16.04 "Xenial Xerus" LTS (64bits)
 sudo apt-get update -y
-sudo apt-get install livestreamer build-essential libpcre3 libpcre3-dev libssl-dev  libpcre3 git  software-properties-common php7.0-cli php7.0-curl php7.0-dev php7.0-fpm php7.0-gd php7.0-mysql php7.0-mcrypt php7.0-opcache php-mbstring php7.0-mbstring php7.0-sybase libsybdb5 php-gettext -y
-#sudo apt-get install ffmpeg  -y
+sudo apt-get install livestreamer build-essential libpcre3 libpcre3-dev libssl-dev libpcre3 git software-properties-common php7.0-cli php7.0-curl php7.0-dev php7.0-fpm php7.0-gd php7.0-mysql php7.0-mcrypt php7.0-opcache php-mbstring php7.0-mbstring php7.0-sybase libsybdb5 php-gettext -y
+sudo apt-get install ffmpeg  -y
 mkdir ~/working
 mkdir ~/working/IELKO
 mkdir ~/working/nginx-rtmp-module
@@ -15,21 +17,21 @@ git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module.git ~/working
 git clone https://github.com/openresty/set-misc-nginx-module.git ~/working/set-misc-nginx-module
 git clone https://github.com/simpl/ngx_devel_kit.git ~/working/ngx_devel_kit
 git clone https://github.com/nginx-modules/nginx-hmac-secure-link.git ~/working/nginx-hmac-secure-link
-wget http://nginx.org/download/nginx-1.13.6.tar.gz -P ~/working
-tar -xf ~/working/nginx-1.13.6.tar.gz -C ~/working/nginx --strip-components=1
-rm ~/working/nginx-1.13.6.tar.gz
+wget http://nginx.org/download/nginx-1.15.8.tar.gz -P ~/working
+tar -xf ~/working/nginx-1.15.8.tar.gz -C ~/working/nginx --strip-components=1
+rm ~/working/nginx-1.15.8.tar.gz
 cd ~/working/nginx
-#./configure --with-http_ssl_module --add-module=../nginx-rtmp-module --add-module=../ngx_devel_kit --add-module=../set-misc-nginx-module --add-module=../nginx-hmac-secure-link
-./configure --with-http_ssl_module --add-module=../nginx-rtmp-module --add-module=../ngx_devel_kit --add-module=../set-misc-nginx-module
+#./configure --with-http_ssl_module --add-module=../nginx-rtmp-module --add-module=../ngx_devel_kit --add-module=../set-misc-nginx-module -add-dynamic-module=../nginx-hmac-secure-link
+./configure --with-http_ssl_module --with-select_module --with-poll_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module --add-module=../nginx-rtmp-module --add-module=../ngx_devel_kit --add-module=../set-misc-nginx-module
 make -j 2
 sudo make install
 cp ~/working/IELKO/conf/nginx.conf /usr/local/nginx/conf/nginx.conf
 cp ~/working/IELKO/conf/nginx.service /etc/init.d/nginx
 sudo chmod +x /etc/init.d/nginx
 sudo /usr/sbin/update-rc.d -f nginx defaults
-ufw allow 8080
-ufw allow 80
-ufw allow 1935
+#ufw allow 8080
+#ufw allow 80
+#ufw allow 1935
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 1935 -j ACCEPT
 iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
